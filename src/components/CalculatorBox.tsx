@@ -1,6 +1,6 @@
 import styles from '../styles/components/CalculatorBox.module.css';
 import { FaExchangeAlt, FaRedo } from 'react-icons/fa';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { CalculatorBoxContext } from '../contexts/CalculatorBoxContext';
 
 
@@ -9,6 +9,10 @@ export function CalculatorBox() {
         getOptionsNode,
         getValueConverted
     } = useContext(CalculatorBoxContext);
+
+    const [value, setValue] = useState(0);
+
+    
 
     async function populateSelect(){
         let options: string[] = await getOptionsNode();
@@ -36,6 +40,8 @@ export function CalculatorBox() {
         let valor = document.querySelector('#valor') as HTMLInputElement;
 
         let value_convertido = await getValueConverted(parseFloat(valor.value), de.value, para.value) 
+        
+        setValue(value_convertido);
     }
 
     useEffect(() => {
@@ -76,6 +82,9 @@ export function CalculatorBox() {
                         <FaRedo/>
                     </button>
                 </div>
+            </div>
+            <div className="value-content">
+                <h2> { value } </h2>
             </div>
         </div>
     );

@@ -18,11 +18,11 @@ interface CalculatorBoxContextData {
 export const CalculatorBoxContext = createContext({} as CalculatorBoxContextData);
 
 export function CalculatorBoxProvider({ children }: CalculatorBoxProviderProps) {
-    const apiUrl = 'https://free.currconv.com/api/v7/'
-    const apiKey = 'do-not-use-this-api-key-XTPJVcEeuzLuRYtP8qWIR'
+    const apiUrl = 'https://api.exchangeratesapi.io/v1'
+    const apiKey = '038513807fa50afcf14e24decfa1fc48'
 
     async function getMoedas () {
-        const moedas_url = `${apiUrl}currencies?apiKey=${apiKey}`;
+        const moedas_url = `currencies?apiKey=${apiKey}`;
         var moedas: moeda[] = [];
 
         await fetch(moedas_url).then(async (response) => {
@@ -42,29 +42,30 @@ export function CalculatorBoxProvider({ children }: CalculatorBoxProviderProps) 
         }).catch((err) => {
             moedas.push({
                 label: 'Dolar (USD)',
-                value: 'USD'
+                value: 'GBP'
             })
             moedas.push({
                 label: 'Real (BRL)',
-                value: 'BRL'
+                value: 'JPY'
             })
         })
 
         return moedas
     }
 
-    async function getValueConverted(fr: string, to: string, value: number) {
-        const contation_url = `${apiUrl}convert?apiKey=${apiKey}&q=${fr}_${to}`;
-
+    async function getValueConverted(value: number, fr: string, to: string) {
+        const contation_url = `${apiUrl}/convert?access_key=${apiKey}&from=${fr}&to=${to}&amount=${value}`;
+        console.log(contation_url)
         var cotation = await fetch(
             contation_url
         ).then(
             async (response) => await response.json()
-        ).catch((err) => {
-            console.log(err)
-        })
-
-        return value * cotation.results[`${fr}_${to}`].val
+        )
+        if (cotation.success){
+            return value * cotation.result
+        } else {
+            return "API indisponível"
+        }
     }
 
     async function getOptionsNode() {
